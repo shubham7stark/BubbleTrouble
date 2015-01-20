@@ -1,13 +1,20 @@
 package com.example.bubblegame;
 
+import java.util.List;
+
+import org.json.JSONObject;
+
+import android.content.Context;
 import android.graphics.Canvas;
+import android.os.AsyncTask;
+import android.util.Log;
 
 public class SurfaceColorBallThread extends Thread {
 	// 2
 	static long FPS = 10;
 	// 2//
 	private SurfacePanel SurfacePanel;
-	private boolean running = false;
+	protected boolean running = false;
 
 	public SurfaceColorBallThread(SurfacePanel SurfacePanel){
 		this.SurfacePanel = SurfacePanel;
@@ -20,7 +27,7 @@ public class SurfaceColorBallThread extends Thread {
 	@Override
 	public void run(){
 
-		long ticksPS = 1000 / FPS;
+		long ticksPS = 500 / FPS;
 		long startTime;
 		long sleepTime;
 		while (running) {
@@ -49,5 +56,6 @@ public class SurfaceColorBallThread extends Thread {
 		}
 	}
 	
+		
 }
 

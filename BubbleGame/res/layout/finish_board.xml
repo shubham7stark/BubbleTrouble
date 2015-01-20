@@ -2,16 +2,80 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:gravity="center"
+       <TextView
+        android:id="@+id/txt_myscore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ScoreBoard"
-        android:fontFamily="@style/TextAppearance.AppCompat.Base.Widget.PopupMenu.Large"
-        android:textSize="40dp"
-       />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:textSize="40sp" 
+        />
 
+       <TextView
+        android:id="@+id/txt_bestscore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textColor="#ffffff"
+        android:layout_below="@+id/txt_myscore"
+        android:textSize="18sp" 
+        />
+       
+      
+  <ImageButton
+      android:id="@+id/button_replay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/replay_logo"
+        android:background="@null"
+     />
+  
+
+<RelativeLayout
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     android:gravity="center_horizontal"
+     android:layout_alignParentBottom="true"
+     android:layout_marginBottom="80dp"
+     >
+
+      <ImageButton
+          android:id="@+id/button_instructions"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:src="@drawable/instruction_logo_small"
+          android:background="@null"
+        />
+      
+      <ImageButton
+          android:id="@+id/button_high_score"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:src="@drawable/high_score_logo_small"
+          android:layout_toRightOf="@+id/button_instructions"
+          android:background="@null"
+         />
+       
+        <ImageButton
+          android:id="@+id/button_home"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:src="@drawable/home_logo_small"
+          android:layout_toRightOf="@+id/button_high_score"
+          android:background="@null"
+         />
+            
+</RelativeLayout>      
+       
 </RelativeLayout>

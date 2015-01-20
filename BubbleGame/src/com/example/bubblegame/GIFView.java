@@ -1,16 +1,10 @@
 package com.example.bubblegame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -19,75 +13,68 @@ public class GIFView extends SurfaceView{
 	
 	private static int WIDTH;
 	private static int HEIGHT;
-	private static int WIDTH_GAP;
 	
-	private Context mContext;
-	
-	private static final int ball_radius = 40;
-	
-	private static final int margin_x = 15;
+//	private Context mContext;
 	
 	private static int NO_OF_TIMES = 0;
+    private int WIDTH_logo = 1;
+    private int HEIGHT_logo = 1;
 	
-	private static final int MAX_BALLS = 8;
-	
-	private static long y_pt;
-	private static long x_pt;
+   
+    /*
+	protected static long y_pt;
+	protected static long x_pt;
 	private static long button_radius;
 	
 	private Paint mPaints[] = new Paint[4];
     
-    private boolean active_button = false;
     
-    private boolean playClicked = false;
-    private boolean how_to_playClicked = false;
-    private boolean high_score_Clicked = false;
-    private boolean about_us = false;
-    private boolean saturation = false;
+    protected boolean playClicked = false;
+    protected boolean how_to_playClicked = false;
+    protected boolean high_score_Clicked = false;
+    protected boolean about_us = false;
+    
+    protected boolean saturation = false;
+    protected boolean active_button = false;
+    
+    */
     
 	private SurfaceHolder surfaceHolder;
 	GIFViewThread GIFViewThread = null;
 	
-	List<GIFViewElement> element_list = new ArrayList<GIFViewElement>();
-	List<GIFViewElement> button_list = new ArrayList<GIFViewElement>();
+//	List<GIFViewElement> button_list = new ArrayList<GIFViewElement>();
 	
+	
+	//int soundIds[] = new int[10];
+	//SoundPool soundPool;
 	
 	
 	public GIFView(Context context, int width, int height){
 		super(context);
-		
+		//mContext = context;
 		WIDTH = width;
-		WIDTH_GAP = (width - 2*margin_x)/(MAX_BALLS-1);
 		HEIGHT =height;
-	
-		y_pt = HEIGHT - WIDTH/3;
-		button_radius = WIDTH/8; 
 		NO_OF_TIMES = 0;
-       
+	
 		/*----Paint-------*/
-		 for(int i = 0; i < 4; i++){
+		/* 
+		for(int i = 0; i < 4; i++){
 			   
 		mPaints[i] = new Paint();
-		mPaints[i].setAntiAlias(true);
 		mPaints[i].setDither(true);
 		mPaints[i].setStyle(Paint.Style.FILL);
-		mPaints[i].setStrokeJoin(Paint.Join.MITER);
-		mPaints[i].setStrokeCap(Paint.Cap.SQUARE);
-		mPaints[i].setStrokeWidth(5);
-		mPaints[i].setAlpha(30);
-	    }
+	   }
 	    
-	    mPaints[0].setColor(Color.BLUE);
-	    mPaints[1].setColor(Color.RED);
-	    mPaints[2].setColor(Color.GREEN);
-	    mPaints[3].setColor(Color.MAGENTA);
+	    mPaints[0].setColor(Color.parseColor("#2cc185"));
+	    mPaints[1].setColor(Color.parseColor("#f6c362"));
+	    mPaints[2].setColor(Color.parseColor("#f1915e"));
+	    mPaints[3].setColor(Color.parseColor("#e22d2d"));
 	    
-	    
+	    */
 	    /*------------------*/
 	    
 	    
 		GIFViewThread = new GIFViewThread(this);
-		
 		surfaceHolder = this.getHolder();
 	    surfaceHolder.addCallback(new SurfaceHolder.Callback() {
 			
@@ -121,15 +108,25 @@ public class GIFView extends SurfaceView{
 	    
 	    });
 	
-	    initial();
-	 }
+	//    initial();
+	    
+	    /*-------------------Soundpool goes here-------------------------*/
+	   /*
+	    soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0); 
+	    soundIds[0] = soundPool.load(context, R.raw.new_bubble, 1);
+	   */
+	    /* 
+	    soundID a soundID returned by the load() function
+	    leftVolume left volume value (range = 0.0 to 1.0)
+	    rightVolume right volume value (range = 0.0 to 1.0)
+	    priority stream priority (0 = lowest priority)
+	    loop loop mode (0 = no loop, -1 = loop forever)
+	    rate playback rate (1.0 = normal playback, range 0.5 to 2.0)
+	    */
+	}
 	
+/*	//utility method of onCreateView
 	void initial(){
-		//Adding balls BUBBLEGAME
-		for(int j = 0; j < MAX_BALLS; j++){
-			GIFViewElement gif_v = new GIFViewElement(j*WIDTH_GAP+margin_x,(j%2 == 0)?0:HEIGHT);
-			element_list.add(gif_v);
-		}
 	
     	//Adding Buttons
     	for(int j = 0; j < 3; j++){
@@ -140,63 +137,31 @@ public class GIFView extends SurfaceView{
     	button_list.add(gif_v);
 		
 	}
+*/
 	
   /*-------------------on Touch----------------------*/
-  @Override
-  public boolean onTouchEvent(MotionEvent event) {
-		
+
+ @Override
+  public boolean onTouchEvent(MotionEvent event)
+  {
+	  /*
+	    soundPool.play(soundIds[0], 1, 1, 1, 1, (float) 2.0);
+	    Log.i("","on touch callled");
+	  */
 	  //after one BUBBLEGAME is shown. Action on clicking buttons
 	  // changing x_pt,y_pt,button radius n (active button to click = false)
-	  
-	if(active_button){
-	  if(event.getY() > HEIGHT-WIDTH/3){
-		 if(event.getX() < WIDTH/3)
-			{how_to_playClicked = true;
-			 x_pt = WIDTH/6;
-			}
-		 if(event.getX()<2*WIDTH/3 && event.getX()>WIDTH/3){
-			high_score_Clicked = true;
-			x_pt = WIDTH/3 + WIDTH/6;
-		    }
-		 if(event.getX()>2*WIDTH/3){
-			playClicked = true;
-		    x_pt = 2*WIDTH/3 + WIDTH/6;
-		 } 
-		 y_pt = HEIGHT-WIDTH/6;  
-		 button_radius = WIDTH/8;
-		 active_button = false;
-	  }
-
-	  if(event.getY() < WIDTH/3 && event.getX()>2*WIDTH/3){
-		  about_us = true;
-		  x_pt = 2*WIDTH/3 + WIDTH/6;
-		  y_pt = WIDTH/6;  
-		  button_radius = WIDTH/8;
-		  active_button = false;
-	  }
-	  
-	}
-	
-	else{
-		if(NO_OF_TIMES == 25 && saturation){
-	    
-		playClicked = false;
+	  /*
+	    if(NO_OF_TIMES == 10 && saturation){
+	    playClicked = false;
 	    how_to_playClicked = false;
 	    high_score_Clicked = false;
 	    about_us = false;
-	    
-	    x_pt = 0; y_pt= 0;button_radius = WIDTH/8;
-	
+	    x_pt = 0; y_pt= 0;button_radius = WIDTH/6;
 	    saturation = false;
 		active_button = true;
-	
-	}
-		
-	}
-	
-	
-		return true;
- 
+	 
+	  }*/
+	  return false;
  }
 	
 
@@ -205,32 +170,20 @@ public class GIFView extends SurfaceView{
 @Override
 public void draw(Canvas canvas){
 		super.draw(canvas);
-		canvas.drawColor(Color.LTGRAY);
-		/*BitmapDrawable bd = (BitmapDrawable) getResources().getDrawable(R.drawable.loading);    
-		Bitmap bm = bd.getBitmap();    
-		Paint paint = new Paint();    
-		paint.setAlpha(60);                             //you can set your transparent value here    
-		canvas.drawBitmap(bm, 0, 0, paint);
-		*/
-	for(int i =0; i < element_list.size(); i++){
-		GIFViewElement gif_v = element_list.get(i);
-		canvas.drawCircle(gif_v.x_cordinate, gif_v.y_cordinate, ball_radius, mPaints[i%4]);
-	}
-	
-	//Draw Buttons
-	if(active_button){
-		for(int i = 0; i <4;i++){
-			GIFViewElement gif_v = button_list.get(i);
-			canvas.drawCircle(gif_v.x_cordinate, gif_v.y_cordinate, WIDTH/8, mPaints[i]);
-		}
-   }
+		
+		//canvas.drawColor(Color.WHITE);
+		//draw logo of app_screen
 
-	
-	//draw after click button
-	if(playClicked){
-	canvas.drawCircle(x_pt,y_pt, button_radius, mPaints[2]);
-	}
-	
+		BitmapDrawable logo_image = (BitmapDrawable) getResources().getDrawable(R.drawable.play_button);    
+		Bitmap logo = logo_image.getBitmap();
+		HEIGHT_logo = (HEIGHT/WIDTH)*WIDTH_logo;
+		Bitmap logo_scaled = Bitmap.createScaledBitmap(logo,WIDTH_logo,HEIGHT_logo,true);
+		Paint paint_logo = new Paint();    
+		paint_logo.setAlpha(255);                             //you can set your transparent value here    
+		canvas.drawBitmap(logo_scaled,WIDTH/2 - WIDTH_logo/2, HEIGHT/3 - HEIGHT_logo/2 , paint_logo);
+		
+/*		  
+		//draw after click button
 	if(how_to_playClicked){
 		canvas.drawCircle(x_pt, y_pt, button_radius, mPaints[0]);
 	}
@@ -238,72 +191,115 @@ public void draw(Canvas canvas){
 		canvas.drawCircle(x_pt,y_pt, button_radius, mPaints[1]);
 	}
 	if(about_us){
-		canvas.drawCircle(x_pt, y_pt, button_radius, mPaints[3]);
+		canvas.drawCircle(x_pt, y_pt, button_radius, mPaints[2]);
+	}
+	if(playClicked){
+		canvas.drawCircle(x_pt,y_pt, button_radius, mPaints[3]);
 	}
 		
-		
-/*
-	if(active_button){
-	     canvas.drawBitmap(bitmap, l, t, paint);
-	     canvas.drawBitmap(bitmap, l, t, paint);
-	     canvas.drawBitmap(bitmap, l, t, paint);
+	
+	//draw after click button and saturation achieved
+	//Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),"fonts/TITILLIUMWEB-LIGHT.ttf");
+	
+	if(how_to_playClicked && saturation){
+	     Paint paint = new Paint();
+	     paint.setColor(Color.WHITE);
+	     paint.setAlpha(80);
+	     paint.setTextSize(110);
+	  //   paint.setTypeface(typeface);
+	     canvas.drawText("HOW", WIDTH/2- 160 ,HEIGHT/2 - 50, paint);
+	     canvas.drawText("TO", WIDTH/2-110 , HEIGHT/2 +100 , paint);
+	     canvas.drawText("PLAY ?", WIDTH/2 -265
+	    		 , HEIGHT/2 + 250, paint);
+	    
+	     Paint paint1 = new Paint();
+	     paint1.setColor(Color.WHITE);
+	     paint1.setAlpha(120);
+	     paint1.setTextSize(50);
+	    // paint1.setTypeface(typeface);
+	     canvas.drawText("Instructions",WIDTH/2 - 272, 70, paint1);	
 	}
 	
-	if(playClicked)
-		canvas.drawBitmap(bitmap, l, t, paint);
-    if(how_to_playClicked)
-    	canvas.drawBitmap(bitmap, l, t, paint);
-    if(high_score_Clicked)
-   	canvas.drawBitmap(bitmap, l, t, paint);
-  
-  */
+	if(high_score_Clicked && saturation){
+	    
+		 Paint paint1 = new Paint();
+	     paint1.setColor(Color.WHITE);
+	     paint1.setTextSize(50);
+	     //paint1.setTypeface(typeface);
+	     canvas.drawText("HIGH SCORE", WIDTH/2 - 230, 80, paint1);
 	
- }
+	     Paint paint = new Paint();
+	     paint.setColor(Color.WHITE);
+	     paint.setAlpha(80);
+	     paint.setTextSize(80);
+	     //paint.setTypeface(typeface);
+	     canvas.drawText("WINNERS",WIDTH/2-260,HEIGHT-100, paint);	
+	
+	     Resources res = getResources();
+	     Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.high_score_logo_large);
+	     canvas.drawBitmap(bitmap, WIDTH/2-165, HEIGHT/2-100, paint1);
+	 
+		 SharedPreferences preferences = mContext.getSharedPreferences("BUBBLE_GAME",
+                 Context.MODE_PRIVATE);
+            int first_high_score = preferences.getInt("first_high_score", -1);
+            int sec_high_score = preferences.getInt("sec_high_score",-1);
+            int third_high_score = preferences.getInt("third_high_score", -1);
+
+           canvas.drawText("1 "+Integer.toString(first_high_score),WIDTH/2-100,HEIGHT/4,paint1);
+           canvas.drawText("3 "+Integer.toString(sec_high_score)+"\n" ,WIDTH/2-100,3*HEIGHT/10 , paint1);
+           canvas.drawText("3 "+Integer.toString(third_high_score), WIDTH/2-100, 7*HEIGHT/20, paint1);
+	  }
+*/
+
+}
 	
 	
-	/////////////////////////////////update
-	
+	//update
 	public void update(long current_time){
 		
-		if(NO_OF_TIMES < 25){
-		//motion of balls
-    	for(int i  = 0 ; i < element_list.size(); i++){
-    		element_list.get(i).moveball((i%2==0)?HEIGHT/75:-2*HEIGHT/75);	
+		if(NO_OF_TIMES < 10){
+		if(NO_OF_TIMES < 8){
+			WIDTH_logo += WIDTH/8;
 		}
-     	NO_OF_TIMES++;
+		else{
+			WIDTH_logo -= WIDTH/16;
+		}
+			NO_OF_TIMES++;
         }
 		
-    	if(NO_OF_TIMES == 24){ 
+		
+	/*
+    	if(NO_OF_TIMES == 9){ 
     		active_button = true;
     	}
     	
            	Log.i("tag", "update");
+           	
      
-     if((playClicked || how_to_playClicked || high_score_Clicked||about_us) && !saturation) 
+     if((playClicked || how_to_playClicked || high_score_Clicked || about_us) && !saturation) 
      {
-               y_pt = y_pt/2 + HEIGHT/4; 	 
-               button_radius += WIDTH/10;
-               x_pt = x_pt/2 + WIDTH/4;
+               y_pt = (4*y_pt+HEIGHT)/6; 	 
+               button_radius += WIDTH/8;
+               x_pt = (4*x_pt+WIDTH)/6;
      }
     
-     /*
-      * if(button_radius > 1.4*HEIGHT && play_clicked){
+     if(button_radius > HEIGHT){
     	 saturation = true;
      }
-	 */
      
-     if(button_radius > 1.5*HEIGHT){
-    	 saturation = true;
-     }
 	
-     if(button_radius > 1.3*HEIGHT && playClicked){
+     if(button_radius > 0.9*HEIGHT && playClicked){
     	 GIFViewThread.setRunning(false);
-		 mContext = getContext();
-    	 Intent intent = new Intent(mContext, GameActivity.class);
-    	    mContext.startActivity(intent);
+		 Intent intent = new Intent(mContext, GameActivity.class);
+		 mContext.startActivity(intent);
      }
-	
-     
-   }
+   
+   */
 		
+
+	}
+
+
+
+
 }

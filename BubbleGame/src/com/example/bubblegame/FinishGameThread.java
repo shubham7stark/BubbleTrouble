@@ -2,15 +2,15 @@ package com.example.bubblegame;
 
 import android.graphics.Canvas;
 
-public class GIFViewThread extends Thread {
+public class FinishGameThread extends Thread {
 	// 2
 	static final long FPS = 10;
 	// 2//
-	private GIFView gifview;
+	private FinishGameBoard FinishGameBoard;
 	private boolean running = false;
 
-	public GIFViewThread(GIFView gifview){
-		this.gifview = gifview;
+	public FinishGameThread(FinishGameBoard FinishGameBoard){
+		this.FinishGameBoard = FinishGameBoard;
 	}
 
 	public void setRunning(boolean run){
@@ -20,22 +20,22 @@ public class GIFViewThread extends Thread {
 	@Override
 	public void run(){
 
-		long ticksPS = 50 / FPS;
+		long ticksPS = 1000 / FPS;
 		long startTime;
 		long sleepTime;
 		while (running) {
 			Canvas c = null;
 			startTime = System.currentTimeMillis();
 			try {
-				c = gifview.getHolder().lockCanvas();
+				c = FinishGameBoard.getHolder().lockCanvas();
 
-				synchronized (gifview.getHolder()) {
-					gifview.update(startTime);
-					gifview.draw(c);
+				synchronized (FinishGameBoard.getHolder()) {
+				//	FinishGameBoard.update(startTime);
+					FinishGameBoard.draw(c);
 				}
 			} finally {
 				if (c != null) {
-					gifview.getHolder().unlockCanvasAndPost(c);
+					FinishGameBoard.getHolder().unlockCanvasAndPost(c);
 				}
 			}
 			sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
