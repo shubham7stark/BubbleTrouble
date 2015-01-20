@@ -1,3 +1,5 @@
+// not in use for app now, this class was added while added while testing 
+
 package com.example.bubblegame;
 
 import android.view.Display;
