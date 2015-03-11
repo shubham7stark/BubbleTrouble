@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,17 +27,15 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 	
 	private TextView myscore;
 	private TextView bestscore;
-	
 	private ImageButton replay;
 	private ImageButton instructions;
-	private ImageButton high_score;
+	private ImageButton about_us;
 	private ImageButton home;
-	
-    private Intent intent;
+	private Intent intent;
     
-    int your_score;
+    private int your_score;
 	
-    int first_high_score, sec_high_score, third_high_score;
+    int first_high_score;
     
     
     
@@ -62,8 +60,9 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 	     
 	    replay = (ImageButton)findViewById(R.id.button_replay);
 	    instructions = (ImageButton)findViewById(R.id.button_instructions);
-	    high_score = (ImageButton)findViewById(R.id.button_high_score);
+	    about_us = (ImageButton)findViewById(R.id.about_us_logo);
 	    home = (ImageButton)findViewById(R.id.button_home);
+	    
 	    
 	    myscore = (TextView)findViewById(R.id.txt_myscore);
 	 	bestscore = (TextView)findViewById(R.id.txt_bestscore);
@@ -79,7 +78,7 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 	    
 	 replay.setOnClickListener(this);
 	 instructions.setOnClickListener(this);
-	 high_score.setOnClickListener(this);
+	 about_us.setOnClickListener(this);
 	 home.setOnClickListener(this);
 	 
 	 //score editing
@@ -88,45 +87,26 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 	 myscore.setText(Integer.toString(your_score));
 	 
 	 
-	 
-	 SharedPreferences preferences = mContext.getSharedPreferences("BUBBLE_GAME",
-			                                                          Context.MODE_PRIVATE);
-	 first_high_score = preferences.getInt("first_high_score", 0);
-	 sec_high_score = preferences.getInt("sec_high_score",0);
-     third_high_score = preferences.getInt("third_high_score", 0);
-     
-     if(your_score > sec_high_score){
-    	 if(your_score > first_high_score){
-             third_high_score = sec_high_score;
-             sec_high_score = first_high_score;
-             first_high_score = your_score;
-    	  
-       }else{
-    		 third_high_score = sec_high_score;
-    		 sec_high_score = your_score;
-    	 }
-     }
-     else{
-    	 if(your_score > third_high_score){
-    		 third_high_score = your_score;
-    	 }
-     }
-     
+	 SharedPreferences preferences = mContext.getSharedPreferences("BUBBLE_GAME",Context.MODE_PRIVATE);
+	 try{
+	 first_high_score = preferences.getInt("first_high_score",0);
+	 }catch(Exception e){
+		 Log.i("",e.toString());
+	 }
+
+	 first_high_score = Math.max(your_score, first_high_score);
+		 
      bestscore.setText("BEST "+Integer.toString(first_high_score));
-    
      
-	 SharedPreferences.Editor prefeditor = preferences.edit();
+     SharedPreferences.Editor prefeditor = preferences.edit();
      prefeditor.putInt("first_high_score", first_high_score); 
-     prefeditor.putInt("sec_high_score", sec_high_score);
-     prefeditor.putInt("third_high_score", third_high_score);
      prefeditor.commit();  
 	
-
 	}
 
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(View v){
 		
 		switch(v.getId()){
 		
@@ -138,8 +118,8 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 		case R.id.button_instructions:
 			onInstructionsClicked();
 			break;
-		case R.id.button_high_score:
-			onHighScoreClicked();
+		case R.id.about_us_logo:
+			onAboutUsClicked();
            break;
 		case R.id.button_home:
 			intent = new Intent(this, MainActivity.class);
@@ -180,12 +160,13 @@ public class FinishGameBoard extends Activity implements OnClickListener{
     }
 
 	
-	public void onHighScoreClicked(){
-		intent = new Intent(this, HighScore.class);
+	public void onAboutUsClicked(){
+		
+		intent = new Intent(this, AboutUs.class);
 		startActivity(intent);
-    	/*
-		Log.i("i", "qi");
-		AlertDialog.Builder builder = new AlertDialog.Builder(FinishGameBoard.this);
+    	Log.i("i", "qi");
+		/*
+    	AlertDialog.Builder builder = new AlertDialog.Builder(FinishGameBoard.this);
 		builder
 		//.setTitle("HIGH SCORE")
 		.setMessage("1)"+Integer.toString(first_high_score)+"\n"+
@@ -228,10 +209,18 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
+		
 		if (id == R.id.action_settings){
-		    finish();
-			return true;
+		 try{
+		  finish();
+		 }
+		catch(Exception e){
+			 Log.i("",e.toString());
+		 }
+		 return true;
+		
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 	

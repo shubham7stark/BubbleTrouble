@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="75dp"
-        android:textSize="40sp" 
+        android:textSize="50sp" 
         />
 
        <TextView
@@ -22,7 +22,7 @@
         android:layout_marginTop="10dp"
         android:textColor="#ffffff"
         android:layout_below="@+id/txt_myscore"
-        android:textSize="18sp" 
+        android:textSize="28sp" 
         />
        
       
@@ -57,11 +57,11 @@
         />
       
       <ImageButton
-          android:id="@+id/button_high_score"
+          android:id="@+id/about_us_logo"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_margin="10dp"
-          android:src="@drawable/high_score_logo_small"
+          android:src="@drawable/about_us_large"
           android:layout_toRightOf="@+id/button_instructions"
           android:background="@null"
          />
@@ -72,7 +72,7 @@
           android:layout_height="wrap_content"
           android:layout_margin="10dp"
           android:src="@drawable/home_logo_small"
-          android:layout_toRightOf="@+id/button_high_score"
+          android:layout_toRightOf="@+id/about_us_logo"
           android:background="@null"
          />
             

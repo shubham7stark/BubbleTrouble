@@ -2,46 +2,51 @@ package com.example.bubblegame;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.media.MediaPlayer;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.animation.TranslateAnimation;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 @SuppressLint("NewApi")
-public class GameActivity extends ActionBarActivity implements OnClickListener{
+public class GameActivity extends Activity implements OnClickListener{
 
 	Display display;
 	Point size = new Point();
 	SurfacePanel surfacePanel;
 	
     
+    private static ImageButton play,replay;
+    private static ImageView background_blur_image;
     
-	
-    private static ImageButton play,instructions,replay,home; 
     RelativeLayout layout;
-	RelativeLayout.LayoutParams play_lp,instructions_lp, replay_lp, home_lp;
+	RelativeLayout.LayoutParams play_lp,replay_lp, layout_params;
+	
+	
 	int WIDTH, HEIGHT;
+	int on_back_pressed = 0;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -51,22 +56,25 @@ public class GameActivity extends ActionBarActivity implements OnClickListener{
 		
 		display = getWindowManager().getDefaultDisplay();
 		display.getSize(size);
-	
+	    
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
+        
+       
         surfacePanel = new SurfacePanel(this,size.x,size.y);
 		
-       
-        
+        WIDTH = size.x;
+  		HEIGHT = size.y;
+      
+    		
 	      //add image buttons
 	       layout = new RelativeLayout(this);
 	       
 	      //Image Button implemented 
 	       play = new ImageButton(this);
 	       play.setImageResource(R.drawable.play_logo_round);
-	       play.setId(1);
+	       play.setId(11);
 	       play.setBackground(null);
 	       
 	       
@@ -76,16 +84,8 @@ public class GameActivity extends ActionBarActivity implements OnClickListener{
 	       replay.setBackground(null);
 	       
 	       
-	       instructions = new ImageButton(this);
-	       instructions.setImageResource(R.drawable.instruction_logo_large);
-	       instructions.setId(11);
-	       instructions.setBackground(null);
+	       background_blur_image = new ImageView(this);
 	       
-	       home = new ImageButton(this);
-	       home.setImageResource(R.drawable.home_logo_small);
-	       home.setId(13);
-           home.setBackground(null);
-           
            
            //layout params
 	       play_lp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -100,92 +100,94 @@ public class GameActivity extends ActionBarActivity implements OnClickListener{
 	       replay_lp.setMargins(10, 5, 10, 5);
 	     
 	       Log.i("","this is wow!!");
-		    
-	       instructions_lp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	       instructions_lp.addRule(RelativeLayout.BELOW,play.getId());
-	       instructions_lp.addRule(RelativeLayout.LEFT_OF,replay.getId());
-	       instructions_lp.setMargins(5, 5, 5, 5);
+		   
+	       layout_params = new RelativeLayout.LayoutParams(WIDTH,HEIGHT);
+	       layout.setLayoutParams(layout_params);
 	       
-	       Log.i("","this is wow!!");
-		    
-	       home_lp =new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	       home_lp.addRule(RelativeLayout.RIGHT_OF,replay.getId());	       
-	       home_lp.addRule(RelativeLayout.BELOW,play.getId());
-	       home_lp.setMargins(5, 5, 5, 5);
 	       
-	       Log.i("","this is wow!!");
-		       
-	        play.setOnClickListener(this);
-	        replay.setOnClickListener(this);
-	        instructions.setOnClickListener(this);
-	        home.setOnClickListener(this);
-	        
+	       play.setOnClickListener(this);
+	       replay.setOnClickListener(this);
 	       Log.i("","asdfdg");  
+	       
 	       layout.addView(surfacePanel, size.x, size.y);
-	        Log.i("","asdfdg2");  
-		     
-	        setContentView(layout);
+	       setContentView(layout);
 	}
 
 	
 	@Override
-	public void onBackPressed() {
-		surfacePanel.surfaceColorBallThread.setRunning(false);
-		boolean retry = true;
-	    while (retry) {
-	        try {
-	            surfacePanel.surfaceColorBallThread.join();
-	            retry = false;
-	        } catch (InterruptedException e) {
-	            // try again shutting down the thread
-	        }
-	    }
+	public void onClick(View v) {
+	
+		if(surfacePanel.is_game_paused){
+		
+		switch (v.getId()){
+		case 11:
+	    moveOutScreen();
+	    surfacePanel.is_game_paused = false;
+	    on_back_pressed = 0;
+	    break;
+	
+		case 12:
+		surfacePanel.life_left = 5;
+		surfacePanel.score = 0;
+		moveOutScreen();
+		on_back_pressed = 0;
+	    surfacePanel.is_game_paused = false;
+        break;
+        }
+		
+       }
 
-		surfacePanel.is_game_paused = true;
+	}	
+	
+	@Override
+	public void onBackPressed(){
+        		on_back_pressed++;
+        		
+	if(on_back_pressed == 1){
+     	surfacePanel.is_game_paused = true;
 		moveInScreen();
-	
-		/*
-		//surfacePanel.surfaceColorBallThread.setRunning(false);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder
-		.setMessage("Do you really want to exit?")
-		.setPositiveButton("NO", new DialogInterface.OnClickListener() {
-	            public void onClick(DialogInterface dialog, int id) {
-             
-	            	surfacePanel.surfaceColorBallThread.setRunning(true);
-	            }
-	   })
-	   .setNegativeButton("YES", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	               surfacePanel.surfaceColorBallThread.setRunning(false);
-                   finish();
-	           }
-	       })
-	
-	   .show();
-		Log.i("i", "qi");
-		*/
+	}else if (on_back_pressed == 2){
+		Intent intent = new Intent(this,MainActivity.class);
+		startActivity(intent);
+		finish();
+	 }
 	}
 	
 	void moveInScreen(){
 		moveViewToScreenCenter(play,0,2*HEIGHT/3,500);
-        moveViewToScreenCenter(instructions,-1*WIDTH/2,0,1500);
         moveViewToScreenCenter(replay,0,HEIGHT/3,1500);
-        moveViewToScreenCenter(home,-WIDTH/2,0,1500);
-
-	    layout.addView(instructions,instructions_lp);
+       
         layout.addView(replay,replay_lp);
         layout.addView(play,play_lp);
-        layout.addView(home,home_lp);
+     }
+	
+
+/*	void settingBackgroundImage(){
+		 Bitmap bitmap;
+	        
+		    surfacePanel.setDrawingCacheEnabled(true); 
+	        bitmap = Bitmap.createBitmap(surfacePanel.getDrawingCache());
+	        surfacePanel.setDrawingCacheEnabled(false);
+	        Log.i("","step1");
+	        
+	        Bitmap scaled_bitmap = Bitmap.createScaledBitmap(bitmap, (int)WIDTH/3,(int)HEIGHT/3 ,false);
+	        bitmap = Bitmap.createScaledBitmap(scaled_bitmap, (int)WIDTH,(int)HEIGHT,false);
+	        
+	        Log.i("","step1");
+		    
+	        //Drawable d = new BitmapDrawable(getResources(),bitmap);
+	        background_blur_image.setImageBitmap(bitmap);
+	        layout.addView(background_blur_image, play_lp);
 
 	}
 
-  public void moveOutScreen(){
-	  
-	    layout.removeView(instructions);
+*/	
+	
+   public void moveOutScreen(){
+	 //   layout.removeView(instructions);
         layout.removeView(replay);
         layout.removeView(play);
-        layout.removeView(home);
+        //   layout.removeView(home);
   }
 
 	private void moveViewToScreenCenter(View view, int x, int y, int duration)
@@ -194,84 +196,36 @@ public class GameActivity extends ActionBarActivity implements OnClickListener{
 	    anim.setDuration(duration);
 	    anim.setFillAfter(true);
 	    view.startAnimation(anim);
-	
 	}
 	
-	@Override
-	public void onClick(View v) {
-	
-		Log.i("","its activity ");
 		
-		if(surfacePanel.is_game_paused){
-		switch (v.getId()){
-		case 1:
-	    moveOutScreen();
-	    surfacePanel.is_game_paused = false;
-	    break;
-	
-		case 11:
-	    onInstructionsClicked();
-		break;
-    	case 12:
-		surfacePanel.life_left = 5;
-		surfacePanel.score = 0;
-		moveOutScreen();
-        surfacePanel.is_game_paused = false;
-        break;
-        
-		case 13:
-		Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-			finish();
-    	break;
-		}
-       }
-		
-	}
-	
-	void onInstructionsClicked(){
-		Intent intent = new Intent(this, Instructions.class);
-		startActivity(intent);
-	}
-	
-	
-
 	@Override
 	protected void onResume(){
 	   super.onResume();
-	    moveOutScreen();
 	    surfacePanel.is_game_paused = false;
 	}
+	
 	
 	@Override
 	protected void onPause(){
 		super.onPause();
 	surfacePanel.surfaceColorBallThread.setRunning(false);
 	}
+	
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	public boolean onCreateOptionsMenu(Menu menu){
+		return false;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings){
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+	protected void onStop(){
+		super.onStop();
 	   surfacePanel.surfaceColorBallThread.setRunning(false);
 	   finish();  
 	}
+	
+	
 }
+
+

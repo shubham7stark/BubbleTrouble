@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Random;
 
 
-import android.R.integer;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -62,11 +61,17 @@ public class SurfacePanel extends SurfaceView{
 	protected boolean is_game_paused = false;
 	
 	SoundPool soundPool;
+	
 	int soundIds[] = new int[10];
 	
+	//ref for getting volume status
+		SharedPreferences preferences;
+		boolean is_vol_on = false;
+
+		
 	public SurfacePanel(Context context, int width, int height){
 		super(context);
-		
+	
 		margin_x = (int)(0.05*width);
 		WIDTH = (int)(0.9*width);
 		WIDTH_GAP = WIDTH/(MAX_BALLS+1);
@@ -151,6 +156,14 @@ public class SurfacePanel extends SurfaceView{
 			}
 	    
 	    });
+	    mContext = context;
+		///shared preferences for checking volume
+        preferences = mContext.getSharedPreferences("BUBBLE_GAME",
+                Context.MODE_PRIVATE);
+                      is_vol_on = preferences.getBoolean("is_vol_on",true);
+
+
+	    
 	    /*-------------------Soundpool goes here-------------------------*/
 	    soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0); 
 	    soundIds[0] = soundPool.load(context, R.raw.new_bubble, 1);
@@ -164,28 +177,27 @@ public class SurfacePanel extends SurfaceView{
 	    rate playback rate (1.0 = normal playback, range 0.5 to 2.0)
 	    */
 	    MediaPlayer btnSound = MediaPlayer.create(context, R.raw.gif_bk);
-        btnSound.start();
-	
-	    //end
-        Log.i("","asdfdg3");  
+        if(is_vol_on)    
+	    btnSound.start();
 	      
 	}
 	
 	
 	
-	/*------------------------on play n pause----------------------*/
-	
-	
   /*-------------------on Touch----------------------*/
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 
 		Log.i("fjhbk","its view bing ");
 		if(!is_game_paused){
+			/*
 			if(!surfaceColorBallThread.running){
 				surfaceColorBallThread.setRunning(true);
-			    (new RetrievePostListInfo(mContext)).execute();
+			    retrieveThread = new RetrieveThread(mContext);
+				(retrieveThread).execute();
 			}
+			*/
 			boolean is_bubble_touched = false;
 			switch(event.getAction()){
 			case MotionEvent.ACTION_DOWN:
@@ -207,8 +219,6 @@ public class SurfacePanel extends SurfaceView{
 			case MotionEvent.ACTION_MOVE:
 				bubble.moveball((int)event.getX(), (int)event.getY());			
 			break;
-			
-			 	
 			}
 			
 			bubble.moveball((int)event.getX(), (int)event.getY());
@@ -227,7 +237,7 @@ public class SurfacePanel extends SurfaceView{
 	public void draw(Canvas canvas){
 		super.draw(canvas);
 		//canvas.drawColor(Color.WHITE);
-	
+	   
 	//draw balls	
 	for(int i =0; i < listColorBalls.size(); i++){
 		ColorBall colorBall = listColorBalls.get(i);
@@ -286,16 +296,18 @@ public class SurfacePanel extends SurfaceView{
 	
 	
 	
-	
-	//Draw ScorEBoard
-	RectF rectf = new RectF((WIDTH - WIDTH/4),HEIGHT/10,WIDTH+2*margin_x+margin_x,HEIGHT/80);
+   if(is_game_paused){	
+	RectF rectf = new RectF(0,0,WIDTH+2*margin_x+margin_x,HEIGHT);
 	canvas.drawRect(rectf,mPaints[5]);
+   }
+   
+ //Draw ScorEBoard
 	canvas.drawText(Integer.toString(life_left),
 			margin_x,HEIGHT/13, mPaints[6]);
-	canvas.drawText(Integer.toString(score)+"/"+Integer.toString(life_left),
-			margin_x,12*HEIGHT/13, mPaints[6]);
 	
-	
+	canvas.drawText(Integer.toString(score),
+			margin_x,24*HEIGHT/25, mPaints[6]);
+   
 	}
 	
 	//OnUpdateUtility
@@ -308,8 +320,9 @@ public class SurfacePanel extends SurfaceView{
 /*-----------------------------------------------------update----------*/
 	
 	public void update(long current_time){
-	
 		//removing n increasing score n lifes once bubble encircle balls
+		if(!is_game_paused){
+	
 		for(int i  = 0 ; i < listColorBalls.size(); i++){
 		ColorBall cballs = listColorBalls.get(i);
 		int dist_bw_ball_n_bubble_x = ((cballs.x_cordinate - bubble.x_cordinate)>0)?
@@ -321,11 +334,22 @@ public class SurfacePanel extends SurfaceView{
 		ColorBall cb = listColorBalls.get(i);
 		score += cb.color_code*cb.radius_code;
 		
+		if(is_vol_on)
 	    soundPool.play(soundIds[0], 1, 1, 1, 3, (float) 2.0); //sound on bubble capturing
 			
-		
-		if(cb.color_code == 0 && life_left>0)life_left--;  
-	    listColorBalls.remove(i);	
+			try {
+				if(cb.color_code == 0 && life_left > 0)
+				{if(life_left>1){
+					life_left--;
+				}else{
+					onDie();
+				}
+				}
+			} catch (InterruptedException e) {
+				Log.i("",toString());
+			}
+			
+		listColorBalls.remove(i);	
 	    }
 		}
 		
@@ -384,32 +408,28 @@ public class SurfacePanel extends SurfaceView{
      }
     	
     //Adding More balls complete
-   
-    	
-    	
          	NO_OF_TIMES_MOVED++;
-         	
            	Log.i("tag", "update");
-	//bubble radius auto-decrease
+
+    //bubble radius auto-decrease
        	bubble.decreaseRadius(-1*WIDTH/25);
-	
-      
-       	no_of_time_execution++;
+	   	no_of_time_execution++;
        	if(no_of_time_execution > 100){
        	   no_of_time_execution = 0;
-       	  if(velocity<WIDTH/50)
-       	   velocity++;   
-       	  if(NO_OF_TIMES > 20){
-       	  NO_OF_TIMES -=2;
-       	  NO_OF_TIMES_MOVED = 0;
-       	  }	
+       	   if(velocity<WIDTH/50)
+       	      velocity++;   
+       	   if(NO_OF_TIMES > 20){
+       	      NO_OF_TIMES -=2;
+       	      NO_OF_TIMES_MOVED = 0;
+       	      }	
        }
-	
+       	
+	}
 	}
 	
 /*-------------------------------------------------------------*/
 	void onDie() throws InterruptedException{
-	if(life_left >0){
+	if(life_left >1){
 		surfaceColorBallThread.sleep(500);
 		life_left--;
 		bubble.radius = WIDTH/6;
@@ -425,13 +445,13 @@ public class SurfacePanel extends SurfaceView{
 		((Activity)mContext).finish();
 		//startActivity(intent);
 	}
-	
 }
 
-	public class RetrievePostListInfo extends AsyncTask<Void, Void, Void>{
-	     
+/*	
+	public class RetrieveThread extends AsyncTask<Void, Void, Void>{
+	    
 		Context context;
-		public RetrievePostListInfo(Context context){
+		public RetrieveThread(Context context){
 			this.context = context;
 		}
 		@Override
@@ -440,5 +460,6 @@ public class SurfacePanel extends SurfaceView{
 			return null;
 	 	}
 	}
-
+*/
+	
 }

@@ -15,7 +15,7 @@ public class SurfaceColorBallThread extends Thread {
 	// 2//
 	private SurfacePanel SurfacePanel;
 	protected boolean running = false;
-
+    
 	public SurfaceColorBallThread(SurfacePanel SurfacePanel){
 		this.SurfacePanel = SurfacePanel;
 	}
