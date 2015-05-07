@@ -1,4 +1,4 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 
 public class ColorBall{

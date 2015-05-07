@@ -1,16 +1,16 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 import android.graphics.Canvas;
 
-public class FinishGameThread extends Thread {
-	// 2
+
+public class BubbleThread extends Thread {
 	static final long FPS = 10;
-	// 2//
-	private FinishGameBoard FinishGameBoard;
+	
+	private SurfacePanel SurfacePanel;
 	private boolean running = false;
 
-	public FinishGameThread(FinishGameBoard FinishGameBoard){
-		this.FinishGameBoard = FinishGameBoard;
+	public BubbleThread(SurfacePanel SurfacePanel){
+		this.SurfacePanel = SurfacePanel;
 	}
 
 	public void setRunning(boolean run){
@@ -27,15 +27,15 @@ public class FinishGameThread extends Thread {
 			Canvas c = null;
 			startTime = System.currentTimeMillis();
 			try {
-				c = FinishGameBoard.getHolder().lockCanvas();
+				c = SurfacePanel.getHolder().lockCanvas();
 
-				synchronized (FinishGameBoard.getHolder()) {
-				//	FinishGameBoard.update(startTime);
-					FinishGameBoard.draw(c);
+				synchronized (SurfacePanel.getHolder()){
+					SurfacePanel.update(startTime);
+					SurfacePanel.draw(c);
 				}
 			} finally {
 				if (c != null) {
-					FinishGameBoard.getHolder().unlockCanvasAndPost(c);
+					SurfacePanel.getHolder().unlockCanvasAndPost(c);
 				}
 			}
 			sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
@@ -50,4 +50,3 @@ public class FinishGameThread extends Thread {
 	}
 	
 }
-

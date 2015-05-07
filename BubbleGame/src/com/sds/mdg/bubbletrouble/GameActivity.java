@@ -1,30 +1,20 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.TranslateAnimation;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -38,7 +28,6 @@ public class GameActivity extends Activity implements OnClickListener{
 	
     
     private static ImageButton play,replay;
-    private static ImageView background_blur_image;
     
     RelativeLayout layout;
 	RelativeLayout.LayoutParams play_lp,replay_lp, layout_params;
@@ -84,7 +73,6 @@ public class GameActivity extends Activity implements OnClickListener{
 	       replay.setBackground(null);
 	       
 	       
-	       background_blur_image = new ImageView(this);
 	       
            
            //layout params

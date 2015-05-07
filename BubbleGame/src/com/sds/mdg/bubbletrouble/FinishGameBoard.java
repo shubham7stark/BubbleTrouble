@@ -1,4 +1,4 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 
 import android.app.Activity;
@@ -122,40 +122,19 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 			onAboutUsClicked();
            break;
 		case R.id.button_home:
-			intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-			finish();
-			break;
+		onHomeClicked();
+		break;
 		}
 	}
 
+	public void onHomeClicked(){
+		intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+        finish();
+	}
+
 	public void onInstructionsClicked(){
-	/*	final Dialog dialog = new Dialog(this);
-					dialog.setContentView(R.layout.instructions);
-					Log.i("1","1");
-					TextView instruction_heading = (TextView)dialog.findViewById(R.id.instruction_heading);
-					instruction_heading.setText("INSTRUCTIONS");
-					
-					ImageButton close = (ImageButton) dialog.findViewById(R.id.close_symbol);
-					TextView instruction_text = (TextView)dialog.findViewById(R.id.instructions_text);
-					Log.i("1","1");
-					instruction_text.setText("he ha ha");
-					close.setImageResource(R.drawable.ic_launcher);
-					Log.i("1","1");
-					
-					close.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							Log.i("1","1");
-							
-							dialog.dismiss();
-						}
-					});
-					Log.i("1","1");
-					
-		 			dialog.show();	
-		*/
-		intent = new Intent(this, Instructions.class);
+		intent = new Intent(this, InstructionsDetailed.class);
 		startActivity(intent);
     }
 
@@ -165,32 +144,10 @@ public class FinishGameBoard extends Activity implements OnClickListener{
 		intent = new Intent(this, AboutUs.class);
 		startActivity(intent);
     	Log.i("i", "qi");
-		/*
-    	AlertDialog.Builder builder = new AlertDialog.Builder(FinishGameBoard.this);
-		builder
-		//.setTitle("HIGH SCORE")
-		.setMessage("1)"+Integer.toString(first_high_score)+"\n"+
-		                   "2)"+Integer.toString(sec_high_score)+"\n"
-		                  +"3)"+Integer.toString(third_high_score)+"\n")
-		//.setIcon(R.drawable.high_score_logo_small)
-			
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	               // User clicked OK button
-	           }
-	       })
-	   .setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-	           public void onClick(DialogInterface dialog, int id) {
-	               // User cancelled the dialog
-	           }
-	       })
-	   .show();
-		Log.i("i", "qi");
-		*/
 	}
 	
 	@Override
-	public void onBackPressed() {
+	public void onBackPressed(){
 		intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
         finish();	

@@ -1,7 +1,8 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,8 +30,9 @@ public class Instructions extends Activity{
 	    inst_txt = (TextView)findViewById(R.id.instructions_text);
 	    inst_txt.setText("'Don't catch the red balls'");
 	    inst_txt.setTextSize(30);
+	    inst_txt.setTextColor(Color.parseColor("#43d2fc"));
 	    
-	    Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Snickles.ttf");
+	    Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/RobotoCondensed-Light.ttf");
 	    inst_txt.setTypeface(custom_font);
         	
 	    splashThread = new Thread(){
@@ -70,7 +72,7 @@ public class Instructions extends Activity{
 	}
 
 	@Override
-	protected void onStop() {
+	protected void onStop(){
 		super.onStop();
 	  
 	}

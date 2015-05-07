@@ -1,4 +1,4 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 /*
  * initially MainActivity + GIFView + GIFViewThread+ GIFViewElement
@@ -15,22 +15,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 @SuppressLint({ "NewApi", "ClickableViewAccessibility"})
@@ -39,14 +40,15 @@ public class MainActivity extends Activity implements OnClickListener{
 
 	Display display;
 	Point size = new Point();
-	GIFView gifView;
 	
 	//image view for button n utilities
 	RelativeLayout layout;
 	
 	private static ImageButton play,about_us,volume_on_off; 
+    private static ImageView logo_image;
+    private static TextView bubble_trouble;
     
-	RelativeLayout.LayoutParams play_lp, about_us_lp,volume_lp;
+	RelativeLayout.LayoutParams play_lp, about_us_lp,volume_lp,logo_lp,bubble_trouble_lp;
 	int WIDTH, HEIGHT;
 	
 	//ref for getting volume status
@@ -70,8 +72,7 @@ public class MainActivity extends Activity implements OnClickListener{
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		Log.i("","1");
 
-        gifView = new GIFView(this,size.x,size.y);
-		
+    	
 		Log.i("","1");
 
         WIDTH = size.x;
@@ -98,6 +99,19 @@ public class MainActivity extends Activity implements OnClickListener{
        about_us.setId(3);
        about_us.setBackground(null);
        
+       logo_image = new ImageView(this);
+       logo_image.setImageResource(R.drawable.currentlogo);
+       logo_image.setBackground(null);
+       logo_image.setId(4);
+       
+       bubble_trouble = new TextView(this);
+       Typeface bubble_tf = Typeface.createFromAsset(getBaseContext().getAssets(),
+               "fonts/RobotoCondensed-Bold.ttf");
+	   bubble_trouble.setTypeface(bubble_tf);
+       bubble_trouble.setTextSize(30);
+	   bubble_trouble.setTextColor(Color.parseColor("#43d2fc"));
+	   bubble_trouble.setText("Bubble Trouble");
+	    
 
        volume_on_off = new ImageButton(this);
        if(is_vol_on){
@@ -126,13 +140,23 @@ public class MainActivity extends Activity implements OnClickListener{
        play_lp.setMargins(0, 50,0,10);
        Log.i("","this is wow!!");
     
-       
        about_us_lp =new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
        about_us_lp.addRule(RelativeLayout.CENTER_HORIZONTAL,1);	       
        about_us_lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
        about_us_lp.setMargins(5, 5, 5, 20);
        
-     	moveViewToScreenCenter(play,0,HEIGHT/4,1000);
+       logo_lp =new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+       logo_lp.addRule(RelativeLayout.CENTER_HORIZONTAL,1);	       
+       logo_lp.setMargins(5,80,2,20);
+       
+       bubble_trouble_lp =new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+       bubble_trouble_lp.addRule(RelativeLayout.CENTER_HORIZONTAL,1);	       
+       bubble_trouble_lp.addRule(RelativeLayout.BELOW,logo_image.getId());
+       bubble_trouble_lp.setMargins(2,15,2,10);
+       
+        moveViewToScreenCenter(logo_image,0,-1*HEIGHT/2,1400);
+        moveViewToScreenCenter(bubble_trouble,0,-1*HEIGHT/2,1600);
+        moveViewToScreenCenter(play,0,HEIGHT/4,1000);
         moveViewToScreenCenter(about_us,0,HEIGHT/3,700);
    
         
@@ -140,9 +164,10 @@ public class MainActivity extends Activity implements OnClickListener{
         about_us.setOnClickListener(this);
         volume_on_off.setOnClickListener(this);
        
-        layout.addView(gifView, size.x, size.y);
         layout.addView(play,play_lp);
         layout.addView(about_us,about_us_lp);
+        layout.addView(logo_image,logo_lp);
+        layout.addView(bubble_trouble,bubble_trouble_lp);
         layout.addView(volume_on_off,volume_lp);
         setContentView(layout);
 	 
@@ -174,17 +199,15 @@ public class MainActivity extends Activity implements OnClickListener{
 	}
 
 	public void onPlayButtonClicked(){
-		gifView.GIFViewThread.setRunning(false);
 		Intent intent = new Intent(this, Instructions.class);
 		startActivity(intent);
+	    finish();
 	}
 
 
 	private void onAboutUsClicked(){
-		gifView.GIFViewThread.setRunning(false);
 		Intent intent = new Intent(this, AboutUs.class);
 		startActivity(intent);
-		
 		
 	}
 
@@ -219,8 +242,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	       })
 	   .setNegativeButton("YES", new DialogInterface.OnClickListener() {
 	           public void onClick(DialogInterface dialog, int id){
-	               gifView.GIFViewThread.setRunning(false);
-                   finish();
+	               finish();
 	           }
 	       })
 	   .show();
@@ -231,7 +253,6 @@ public class MainActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onPause(){
 		super.onPause();
-	gifView.GIFViewThread.setRunning(false);
 	if (mediaPlayer != null && mediaPlayer.isPlaying()) {
         mediaPlayer.stop();
         mediaPlayer.release();
@@ -242,7 +263,6 @@ public class MainActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onResume(){
 		super.onResume();
-	   gifView.GIFViewThread.setRunning(true);
 	   if(mediaPlayer == null)		  
 		   mediaPlayer = MediaPlayer.create(this,R.raw.gif_bk);
 	   if (!mediaPlayer.isPlaying() && is_vol_on) {
@@ -253,7 +273,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onStop(){
 		super.onStop();
-		finish();
+		//finish();
 	}
 	
 	

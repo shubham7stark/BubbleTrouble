@@ -1,9 +1,8 @@
-package com.example.bubblegame;
+package com.sds.mdg.bubbletrouble;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -18,13 +17,12 @@ import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class SurfacePanel extends SurfaceView{
+public class SurfacePanel extends SurfaceView {
 
 	private Context mContext;
 	
@@ -46,7 +44,7 @@ public class SurfacePanel extends SurfaceView{
 	private static final int TYPES_OF_BALL = 5;
     
 	private Paint mPaint;
-    private Paint mPaints[] = new Paint[7];
+    private Paint mPaints[] = new Paint[8];
     
     protected static int score;
     protected static int life_left;
@@ -59,6 +57,7 @@ public class SurfacePanel extends SurfaceView{
 	Bubble bubble;
 
 	protected boolean is_game_paused = false;
+	protected boolean is_game_started = false;
 	
 	SoundPool soundPool;
 	
@@ -81,10 +80,10 @@ public class SurfacePanel extends SurfaceView{
 		
 		velocity = WIDTH/100;
 		
-		bubble = new Bubble(width/2,height/2,width/8);
+		bubble = new Bubble(width/2,2*height/3,width/8);
        
 		/*----Paint-------*/
-		for(int i =0;i<7;i++){
+		for(int i =0;i<8;i++){
 		mPaints[i] = new Paint();
 	    //mPaint.setAntiAlias(true);
 		mPaints[i].setDither(true);
@@ -101,8 +100,7 @@ public class SurfacePanel extends SurfaceView{
 		mPaints[3].setColor(Color.parseColor("#f3d34a"));
 		mPaints[4].setColor(Color.parseColor("#e58630"));
 		mPaints[5].setColor(Color.BLACK);
-       	
-		for(int i =0;i<6;i++)
+       	for(int i =0;i<6;i++)
 		mPaints[i].setAlpha(150);
 		
 			/*------------------*/
@@ -116,6 +114,8 @@ public class SurfacePanel extends SurfaceView{
 	    
 	    mPaints[6].setTextSize(HEIGHT/20);
 	    mPaints[6].setColor(Color.WHITE);
+	    mPaints[7].setTextSize(HEIGHT/20);
+	    mPaints[7].setColor(Color.parseColor("#43d2fc"));
 	    
 	    
 	    
@@ -188,7 +188,7 @@ public class SurfacePanel extends SurfaceView{
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-
+        is_game_started = true;
 		Log.i("fjhbk","its view bing ");
 		if(!is_game_paused){
 			/*
@@ -270,7 +270,8 @@ public class SurfacePanel extends SurfaceView{
 	else{
 		try {
 			this.onDie();
-		} catch (InterruptedException e) {
+			 is_game_started = false;
+		} catch (InterruptedException e){
 			e.printStackTrace();
 		}
 	}
@@ -306,7 +307,7 @@ public class SurfacePanel extends SurfaceView{
 			margin_x,HEIGHT/13, mPaints[6]);
 	
 	canvas.drawText(Integer.toString(score),
-			margin_x,24*HEIGHT/25, mPaints[6]);
+			margin_x,24*HEIGHT/25, mPaints[7]);
    
 	}
 	
@@ -321,7 +322,7 @@ public class SurfacePanel extends SurfaceView{
 	
 	public void update(long current_time){
 		//removing n increasing score n lifes once bubble encircle balls
-		if(!is_game_paused){
+		if(!is_game_paused && is_game_started){
 	
 		for(int i  = 0 ; i < listColorBalls.size(); i++){
 		ColorBall cballs = listColorBalls.get(i);
@@ -446,20 +447,5 @@ public class SurfacePanel extends SurfaceView{
 		//startActivity(intent);
 	}
 }
-
-/*	
-	public class RetrieveThread extends AsyncTask<Void, Void, Void>{
-	    
-		Context context;
-		public RetrieveThread(Context context){
-			this.context = context;
-		}
-		@Override
-		protected Void doInBackground(Void... arg0) {
-		     surfaceColorBallThread.run();
-			return null;
-	 	}
-	}
-*/
 	
 }
