@@ -4,7 +4,7 @@ An engaging Android game where you capture colorful bubbles in a fun and challen
 
 ## Description
 
-Bubble Trouble is an Android game that combines elements of puzzle and arcade gameplay. Players must capture colorful bubbles by matching them with the correct colors, creating an engaging and addictive gaming experience.
+Bubble Trouble is an Android game that combines puzzle and arcade gameplay elements. Players must capture colourful bubbles by matching them with the correct colours, creating an engaging and addictive gaming experience.
 
 ## Features
 
@@ -47,10 +47,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Author
-
-Shubham Stark
 
 ## Acknowledgments
 
